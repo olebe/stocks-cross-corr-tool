@@ -8,12 +8,15 @@ inputdata = yf.download(tickers='SPY', period='1mo', interval='5m')['Open']
 # Stock ticker
 ticker = 'GME'
 
-# Stock data period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-period = '5d'
-
 # Stock data interval: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
 interval = '1m'
 
+# Stock data period: always use max available period based on interval
+intervals = ['1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo']
+periods= ['7d','60d','60d','60d','60d','730d','60d','730d','max','max','max','max','max']
+freq_dict = dict(zip(intervals, periods))
+
+period = freq_dict[interval]
 # Maximum time lag (in minutes)
 maxtau = 60
 
