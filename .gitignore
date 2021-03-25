@@ -5,3 +5,6 @@
 
 #jupyter
 .ipynb_checkpoints/
+
+#auth file
+auth.txt
