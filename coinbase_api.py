@@ -54,18 +54,29 @@ def show_account():
     return account_num
 
 def get_current_account_prices(accounts):
-    accounts['Current_price_in_EUR']=0
+    # Initiate array
+    currentprice = np.zeros(len(accounts))
 
     for i in range(len(accounts)):
 
         #print (accounts['currency'].iloc[i])
         temp_currency=accounts['currency'].iloc[i]
 
-        try:
-            temp_price = pd.to_numeric(public_client.get_product_ticker(product_id=temp_currency+'-EUR')['bid'], downcast = 'float')
-            accounts['Current_price_in_EUR'].iloc[i]=temp_price
+        # Get ticker
+        ticker = public_client.get_product_ticker(product_id=temp_currency+'-EUR')
 
-        except: accounts['Current_price_in_EUR'].iloc[i]=np.nan
+        # Check for reply error
+        if 'bid' in ticker.keys():
+            # Extract bid from reply
+            temp_price = pd.to_numeric(ticker['bid'], downcast = 'float')
+
+            # Add to array
+            currentprice[i] = temp_price
+        else:
+            currentprice[i] = np.nan
+
+        # Insert array in dataframe
+        accounts['Current_price_in_EUR'] = currentprice
             
     return accounts
 
@@ -84,4 +95,9 @@ print('\n\n\n\nShow Bollinger Bands for EOS-EUR')
 
 price_hist= historic_price ('BTC-EUR', granularity = 21600)
 price = bollinger(price_hist,20,2)
+
+# Plot time trace
 price[['close','Bollinger High','Bollinger Low','Rolling Mean']].plot(figsize= (20,10))
+plt.ylabel('Price (EUR)')
+plt.title('BTC-EUR')
+plt.show()
